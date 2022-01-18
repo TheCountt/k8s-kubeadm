@@ -28,13 +28,3 @@ override.tf.json
 # example: *tfplan*
 .terraform*
 ssh
-
-# 
-get-pip.py
-z-key-pair-tf-generated
-
-##
-etcd-v3*
-
-##
-tooling.yml

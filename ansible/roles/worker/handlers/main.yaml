@@ -1,0 +1,12 @@
+---
+- name: Restart Kube* services
+  become: yes
+  ansible.builtin.systemd: 
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  loop:
+    - containerd
+    - kubelet
+    - kube-proxy

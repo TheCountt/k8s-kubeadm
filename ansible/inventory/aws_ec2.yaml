@@ -1,0 +1,32 @@
+---
+plugin: aws_ec2
+aws_profile: automator
+
+regions:
+  - "us-west-2"
+
+strict: False
+
+keyed_groups:
+- key: tags
+  prefix: tag
+
+filters:
+  tag:Name:
+    - k8s-cluster-from-ground-up-master-0
+    - k8s-cluster-from-ground-up-master-1
+    - k8s-cluster-from-ground-up-master-2
+    - k8s-cluster-from-ground-up-worker-0
+    - k8s-cluster-from-ground-up-worker-1
+    - k8s-cluster-from-ground-up-worker-2
+  instance-state-name : running
+  
+hostnames:
+# a list in order of precedence for hostname variables.
+  - ip-address
+  - private-ip-address
+  - tag:Name
+  - dns-name
+
+compose:
+  ansible_host: ip-address

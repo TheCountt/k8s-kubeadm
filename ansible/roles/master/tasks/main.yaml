@@ -1,0 +1,222 @@
+--- 
+    
+    - name: Create /var/lib/kubernetes
+      ansible.builtin.file:
+        path: /var/lib/kubernetes
+        state: directory
+        follow: yes
+
+    - name: Copy certificates and configuration files 
+      copy:
+        src: "/tmp/ca-authority/{{ item }}"
+        dest: "/var/lib/kubernetes"
+        remote_src: no
+      loop:
+        - ca.pem
+        - ca-key.pem
+        - service-account-key.pem
+        - service-account.pem
+        - master-kubernetes.pem
+        - master-kubernetes-key.pem
+        - kube-scheduler.kubeconfig
+        - kube-controller-manager.kubeconfig
+        - encryption-config.yaml
+        - admin.kubeconfig
+    
+    
+    - name: Download etcd
+      become: true
+      get_url:
+        url: https://github.com/etcd-io/etcd/releases/download/v3.4.15/etcd-v3.4.15-linux-amd64.tar.gz
+        dest: /tmp/etcd-v3.4.15-linux-amd64.tar.gz
+        timeout: 600
+    
+    
+    - name: Unarchive etcd binary file
+      unarchive:
+        src: /tmp/etcd-v3.4.15-linux-amd64.tar.gz
+        dest: /tmp
+        remote_src: yes
+
+
+    - name: Locate etcd files to copy
+      ansible.builtin.find:
+        paths: /tmp/etcd-v3.4.15-linux-amd64/
+        recurse: yes
+        patterns: "etcd*"
+      register: etcd_files_to_copy
+    
+    - name: Copy found items
+      copy:
+        src: "{{ item.path }}"
+        dest: /usr/local/bin/
+        remote_src: yes
+      with_items: "{{ etcd_files_to_copy.files }}"
+
+    - name: Set executable
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: +x
+      loop:
+        - /usr/local/bin/etcd
+        - /usr/local/bin/etcdctl
+
+    - name: Create /etc/etcd
+      ansible.builtin.file:
+        path: /etc/etcd
+        state: directory
+        follow: yes
+
+    - name: Create /var/lib/etcd
+      ansible.builtin.file:
+        path: /var/lib/etcd
+        state: directory
+        mode: 0700
+        follow: yes
+
+    - name: Copy pem files
+      copy:
+        src: "/var/lib/kubernetes/{{ item }}"
+        dest: "/etc/etcd"
+        remote_src: yes
+      loop:
+        - master-kubernetes-key.pem
+        - master-kubernetes.pem
+        - ca.pem
+
+    - name: Create and write the etcd.service systemd unit file into destination directory
+      template:
+        src: ./templates/etcd.service.j2
+        dest: /etc/systemd/system/etcd.service
+      notify: Restart etcd service
+
+    - name: Start etcd service
+      become: true
+      systemd: 
+        name: etcd
+        state: started
+        enabled: yes
+        daemon_reload: yes
+
+    - name: Download official Kubernetes release binaries
+      become: true
+      get_url:
+        url: "{{ item }}"
+        dest: /tmp
+        timeout: 60
+      loop:
+        - https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-apiserver
+        - https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-controller-manager
+        - https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-scheduler
+        - https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl
+
+    
+    - name: Copy kube* files into destination directory
+      copy:
+        src: "/tmp/{{ item }}"
+        dest: /usr/local/bin/
+        remote_src: yes
+      loop: 
+        - kube-apiserver
+        - kube-controller-manager
+        - kube-scheduler
+        - kubectl
+
+    
+    - name: Locate kube* files
+      ansible.builtin.find:
+        paths: /usr/local/bin/
+        recurse: no
+        patterns: "kube*"
+      register: kube_components
+
+
+    - name: Make kube* files executable
+      file:
+        path: "{{ item.path }}"
+        mode: +x
+      with_items: "{{ kube_components.files }}"
+
+
+    - name: Create /etc/kubernetes/config directory
+      ansible.builtin.file:
+        path: /etc/kubernetes/config
+        state: directory
+        follow: yes
+
+    
+    - name: Copy kube* templates
+      template:
+        src: "./templates/{{ item.src }}.j2"
+        dest: "{{ item.dest }}"
+      loop:
+        - {src: kube-scheduler.yaml, dest: /etc/kubernetes/config/kube-scheduler.yaml}
+        - {src: kube-controller-manager.service, dest: /etc/systemd/system/kube-controller-manager.service}
+        - {src: kube-apiserver.service, dest: /etc/systemd/system/kube-apiserver.service}
+        - {src: kube-scheduler.service, dest: /etc/systemd/system/kube-scheduler.service}
+      notify: Restart Controller services
+
+    - name: Start Controller services
+      become: true
+      ansible.builtin.systemd: 
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+        daemon_reload: yes
+      loop:
+        - kube-apiserver
+        - kube-controller-manager
+        - kube-scheduler
+
+  
+    - name: Add host file entries
+      template:
+        src: ./templates/etc.hosts.j2
+        dest: /etc/hosts
+
+
+    - name: Remove swapfile from /etc/fstab to disable swap
+      ansible.posix.mount:
+        name: "{{ item }}"
+        fstype: swap
+        state: absent
+      with_items:
+        - swap
+        - none
+
+    - name: Disable swap
+      command: swapoff -a
+
+    
+    - name: curl master nodes to check reachability
+      ansible.builtin.command: curl --cacert /var/lib/kubernetes/ca.pem https://{{internal_ip}}:6443/version
+
+    - name: get cluster details
+      ansible.builtin.command: kubectl cluster-info  --kubeconfig /var/lib/kubernetes/admin.kubeconfig
+
+    - name: get current namespaces
+      ansible.builtin.command: kubectl get namespaces --kubeconfig /var/lib/kubernetes/admin.kubeconfig
+
+###########################################################################################################################
+    # - name: Copy pem keys for context authentication for server 
+    #   copy:
+    #     src: "/tmp/ca-authority/{{ item }}"
+    #     dest: "/home/ubuntu"
+    #     remote_src: no
+    #   loop:
+    #     - ca.pem
+    #     - admin-key.pem
+    #     - admin.pem
+
+    # - name: Copy to control plane directory
+    #   copy:
+    #     src: "./templates/kubeconfig-server.sh"
+    #     dest: "/home/ubuntu"
+    #     mode: +rwx
+    
+    # - name: Set context for remote access
+    #   ansible.builtin.shell: ./kubeconfig-server.sh
+    #   args:
+    #     chdir: /home/ubuntu
+
+        ###################################

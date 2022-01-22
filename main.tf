@@ -31,22 +31,22 @@ module "master-nodes" {
 }
 
 # the module creates worker-nodes
-module "worker-nodes" {
-  source        = "./modules/worker-nodes"
-  region        = var.region
-  subnet_id     = module.network.subnet_id
-  instance_type = var.instance_type
-  ami           = var.ami
-  k8s-sg        = module.network.security-group
-}
+# module "worker-nodes" {
+#   source        = "./modules/worker-nodes"
+#   region        = var.region
+#   subnet_id     = module.network.subnet_id
+#   instance_type = var.instance_type
+#   ami           = var.ami
+#   k8s-sg        = module.network.security-group
+# }
 
-# the module creates network load-balancer
-module "network-lb" {
-  source       = "./modules/network-lb"
-  vpc_id       = module.network.vpc_id
-  subnet_id    = module.network.subnet_id
-  resource_tag = var.resource_tag
-}
+# # the module creates network load-balancer
+# module "network-lb" {
+#   source       = "./modules/network-lb"
+#   vpc_id       = module.network.vpc_id
+#   subnet_id    = module.network.subnet_id
+#   resource_tag = var.resource_tag
+# }
 
 # the module creates pod network routes
 # module "pod-network-route" {

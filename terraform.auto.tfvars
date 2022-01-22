@@ -2,9 +2,9 @@ region = "us-west-2"
 
 vpc_cidr = "10.0.0.0/16"
 
-subnet_cidr = "10.0.1.0/24"
+subnet_cidr = "10.0.0.0/24"
 
-service_cidr = "10.32.0.0/24"
+service_cidr = "10.100.0.0/16"
 
 all_ips = "0.0.0.0/0"
 
@@ -16,13 +16,11 @@ enable_classiclink = "false"
 
 enable_classiclink_dns_support = "false"
 
-resource_tag = "kubernetes.io/cluster/k8s-kubeadm"
+name_tag = "k8s-kubeadm"
 
-ami = "ami-0477c9562acb01819"
+ami = "ami-078278691222aee06"
 
-instance_type = "t2.micro"
-
-
+instance_type = "t3.medium"
 
 
 

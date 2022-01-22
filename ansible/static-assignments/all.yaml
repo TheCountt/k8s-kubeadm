@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
+- hosts: all---both master and worker
   gather_facts: false
   become: true
   roles:
-     - workstation
+     - all

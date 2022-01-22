@@ -11,9 +11,7 @@ resource "aws_vpc" "k8s-vpc" {
   enable_classiclink             = var.enable_classiclink
   enable_classiclink_dns_support = var.enable_classiclink_dns_support
 
-  tags = {
-    Name = var.resource_tag
-  }
+  tags = var.resource_tag
 }
 
 # create dhcp options
@@ -21,9 +19,7 @@ resource "aws_vpc_dhcp_options" "k8s-dhcp-option" {
   domain_name         = "${var.region}.compute.internal"
   domain_name_servers = ["AmazonProvidedDNS"]
 
-  tags = {
-    Name = var.resource_tag
-  }
+  tags = var.resource_tag
 }
 
 # associate dhcp options
@@ -38,9 +34,7 @@ resource "aws_subnet" "k8s-subnet" {
   cidr_block              = var.subnet_cidr
   map_public_ip_on_launch = true
 
-  tags = {
-    Name = var.resource_tag
-  }
+  tags = var.resource_tag
 }
 
 # create service cidr and attach to vpc
@@ -53,9 +47,8 @@ resource "aws_vpc_ipv4_cidr_block_association" "service_cidr" {
 # create internet gateway and attach to vpc
 resource "aws_internet_gateway" "k8s-ig" {
   vpc_id = aws_vpc.k8s-vpc.id
-  tags = {
-    Name = var.resource_tag
-  }
+  
+  tags = var.resource_tag
 }
 
 
@@ -63,9 +56,7 @@ resource "aws_internet_gateway" "k8s-ig" {
 resource "aws_route_table" "k8s-rtb" {
   vpc_id = aws_vpc.k8s-vpc.id
 
-  tags = {
-    Name = var.resource_tag
-  }
+  tags = var.resource_tag
 }
 
 # create route for internet gateway
@@ -183,7 +174,5 @@ resource "aws_security_group" "k8s-sg" {
     cidr_blocks = [var.all_ips]
   }
 
-  tags = {
-    Name = var.resource_tag
-  }
+  tags = var.resource_tag
 }

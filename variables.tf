@@ -16,7 +16,14 @@ variable "enable_classiclink" {}
 
 variable "enable_classiclink_dns_support" {}
 
-variable "resource_tag" {}
+variable "name_tag" {}
+
+variable "resource_tag" {
+  type = map({
+    name    = "kube-adm"
+    kubernetes.io/cluster/kubeadm = "owned"
+  })
+}
 
 variable "instance_type" {}
 

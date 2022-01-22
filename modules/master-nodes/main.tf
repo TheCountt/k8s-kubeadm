@@ -33,7 +33,7 @@ resource "aws_instance" "k8s-master" {
 
   tags = {
     Name = "master-${count.index}"
-    kubernetes.io/cluster/kubeadm = "owned"
+    "kubernetes.io/cluster/kubeadm" = "owned"
   }
 
 }

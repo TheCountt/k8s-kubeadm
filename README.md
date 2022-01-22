@@ -1,4 +1,1 @@
-# deploying and orchestrate application containers in kubernetes 
-
-## Steps
-- Set up kubernetes
+# Automation of K8s cluster using kubeadm as its primary utility tool with Terraform and Ansible

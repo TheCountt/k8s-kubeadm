@@ -9,6 +9,8 @@ variable "instance_type" {}
 
 variable "k8s-sg" {}
 
+variable "master_iam_instance_profile" {}
+
 
 variable "key_name" {
   type    = string

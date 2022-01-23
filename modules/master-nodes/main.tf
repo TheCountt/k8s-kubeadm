@@ -6,6 +6,7 @@ resource "aws_instance" "k8s-master" {
   count                       = length(var.master_ip_list)
   private_ip                  = element(var.master_ip_list, count.index)
   vpc_security_group_ids      = [var.k8s-sg]
+  iam_instance_profile        = var.master_iam_instance_profile
   associate_public_ip_address = true
   user_data                   = <<-EOT
   #!/bin/bash

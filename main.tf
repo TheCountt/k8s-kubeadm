@@ -20,14 +20,19 @@ module "keypair" {
   source = "./modules/keypair"
 }
 
+module "iam-master" {
+  source = "./modules/iam-master"
+}
+
 # The Module creates instances 
 module "master-nodes" {
-  source        = "./modules/master-nodes"
-  region        = var.region
-  subnet_id     = module.network.subnet_id
-  instance_type = var.instance_type
-  ami           = var.ami
-  k8s-sg        = module.network.security-group
+  source                      = "./modules/master-nodes"
+  region                      = var.region
+  subnet_id                   = module.network.subnet_id
+  instance_type               = var.instance_type
+  ami                         = var.ami
+  k8s-sg                      = module.network.security-group
+  master_iam_instance_profile = module.iam-master.master_iam_instance_profile
 }
 
 # the module creates worker-nodes

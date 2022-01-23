@@ -18,3 +18,8 @@ variable "all_ips" {}
 
 variable "resource_tag" {}
 
+variable "ingress" {
+    type = list(number)
+    description = "list in ports"
+    default = [22, 6443, 80, 10250]
+}

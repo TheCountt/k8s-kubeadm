@@ -82,56 +82,21 @@ resource "aws_route_table_association" "k8s-association" {
 resource "aws_security_group" "k8s-sg" {
   name        = "k8s-sg"
   vpc_id      = aws_vpc.k8s-vpc.id
-  description = "Creating Inbound Traffic"
+  description = "Creating Traffic rules"
 
-  # Create Inbound traffic for SSH from anywhere (Do not do this in production. Limit access ONLY to IPs or CIDR that MUST connect)
-  ingress {
-    description = "SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.all_ips]
+# create a dynamic block for ports 22, 6443, 80, 10250
+  dynamic "ingress" {
+    for_each = var.ingress
+    
+    content {
+      from_port = ingress.value
+      to_port   = ingress.value
+      protocol  = "tcp"
+      cidr_blocks = [var.all_ips]
+    }
   }
 
-  # Create ICMP ingress for all types
-  ingress {
-    description = "ICMP"
-    from_port   = -1
-    to_port     = -1
-    protocol    = "icmp"
-    cidr_blocks = [var.all_ips]
-  }
-
-  # Create inbound traffic to allow connections to the Kubernetes API Server listening on port 6443
-  ingress {
-    description = "allow connections to K8s API server"
-    from_port   = 6443
-    to_port     = 6443
-    protocol    = "tcp"
-    cidr_blocks = [var.all_ips]
-  }
-
-  # Create inbound traffic to port 10250
-
-  ingress {
-    description = "open port 10250"
-    from_port   = 10250
-    to_port     = 10250
-    protocol    = "tcp"
-    cidr_blocks = [var.all_ips]
-  }
-
-  # Create inbound traffic to port 80
-
-  ingress {
-    description = "open port 80"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = [var.all_ips]
-  }
-
-  # Create Inbound traffic for all communication within the subnet to connect on ports used by the master node(s)
+ # Create Inbound traffic for all communication within the subnet to connect on ports used by the master node(s)
   ingress {
     description = "master nodes"
     from_port   = 2379
@@ -140,7 +105,7 @@ resource "aws_security_group" "k8s-sg" {
     cidr_blocks = [var.subnet_cidr]
   }
 
-  # Create Inbound traffic for all communication within the subnet to connect on ports used by the worker nodes
+   # Create Inbound traffic for all communication within the subnet to connect on ports used by the worker nodes
   ingress {
     description = "worker nodes"
     from_port   = 30000
@@ -148,26 +113,17 @@ resource "aws_security_group" "k8s-sg" {
     protocol    = "tcp"
     cidr_blocks = [var.subnet_cidr]
   }
-///////////////////////////////
-  # # Just checking
-  #     ingress {
-  #       description = "service"
-  #       from_port = 0
-  #       to_port = 0
-  #       protocol = "-1"
-  #       cidr_blocks = ["172.32.0.0/16"]
-  #     }
 
-  # # Just checking
-  #     ingress {
-  #       description = "all"
-  #       from_port = 0
-  #       to_port = 0
-  #       protocol = "-1"
-  #       cidr_blocks = [var.all_ips]
-  #     }
-////////////////////////////////
-  egress {
+   # Create ICMP ingress for all types
+  ingress {
+    description = "ICMP"
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = [var.all_ips]
+  }
+
+ egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -176,3 +132,15 @@ resource "aws_security_group" "k8s-sg" {
 
   tags = var.resource_tag
 }
+
+
+
+
+
+
+
+
+
+
+
+

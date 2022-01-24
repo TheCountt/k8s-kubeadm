@@ -1,18 +1,18 @@
 ---
-- name: Copy kubadm.conf file
-  ansible.builtin.template:
-    src: "./templates/kubeadm.conf"
-    dest: "/etc/kubernetes"
+# - name: Copy kubadm.conf file
+#   ansible.builtin.template:
+#     src: "./templates/kubeadm.conf"
+#     dest: "/etc/kubernetes"
 
 
-- name: Copy 10-kubeadm.conf file
-  ansible.builtin.template:
-    src: "./templates/10-kubeadm.conf"
-    dest: "/etc/systemd/system/kubelet.service.d"
+# - name: Copy 10-kubeadm.conf file
+#   ansible.builtin.template:
+#     src: "./templates/10-kubeadm.conf"
+#     dest: "/etc/systemd/system/kubelet.service.d"
 
 
 - name: initialize the cluster
-  command: kubeadm init --config /etc/kubernetes/kubeadm.conf --upload-certs > cluster_initialized.txt
+  command: kubeadm init --config /etc/kubernetes/aws.yaml --upload-certs > cluster_initialized.txt
   args:
     chdir: $HOME
     creates: cluster_initialized.txt

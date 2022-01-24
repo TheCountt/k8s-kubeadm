@@ -7,14 +7,15 @@ resource "aws_instance" "k8s-worker" {
   private_ip                  = element(var.worker_ip_list, count.index)
   vpc_security_group_ids      = [var.k8s-sg]
   associate_public_ip_address = true
-  user_data                   = <<-EOT
-  #!/bin/bash
-  hostname "ip-10-0-1-2${count.index}.us-west-2.compute.internal"
-  echo "ip-10-0-1-2${count.index}.us-west-2.compute.internal" > /etc/hostname
-  hostnamectl
-  EOT
-  
+  iam_instance_profile        = "k8s-worker-profile"
   key_name                    = "k8s-kubeadm"
+  user_data                   = <<-EOF
+  #!/bin/bash
+  hostname "ip-10-0-0-2${count.index}.us-west-2.compute.internal"
+  echo "ip-10-0-0-2${count.index}.us-west-2.compute.internal" > /etc/hostname
+  hostnamectl
+  EOF
+  
 
   root_block_device {
 
@@ -32,8 +33,8 @@ resource "aws_instance" "k8s-worker" {
   }
 
   tags = {
-    Name = "worker-${count.index}"
-    kubernetes.io/cluster/kubeadm = "owned"
+   "Name" = "worker-${count.index}"
+    "kubernetes.io/cluster/kubeadm" = "owned"
   }
 }
 

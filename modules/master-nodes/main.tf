@@ -6,16 +6,15 @@ resource "aws_instance" "k8s-master" {
   count                       = length(var.master_ip_list)
   private_ip                  = element(var.master_ip_list, count.index)
   vpc_security_group_ids      = [var.k8s-sg]
-  iam_instance_profile        = var.master_iam_instance_profile
+  iam_instance_profile        = "k8s-master-profile"
   associate_public_ip_address = true
-  user_data                   = <<-EOT
+  key_name                    = "k8s-kubeadm"
+  user_data                   = <<-EOF
   #!/bin/bash
   hostname "ip-10-0-0-1${count.index}.us-west-2.compute.internal"
   echo "ip-10-0-0-1${count.index}.us-west-2.compute.internal" > /etc/hostname
   hostnamectl
-  EOT
-
-  key_name                    = "k8s-kubeadm"
+  EOF
 
   root_block_device {
 

@@ -18,7 +18,7 @@ enable_classiclink_dns_support = "false"
 
 name_tag = "k8s-kubeadm"
 
-ami = "ami-078278691222aee06"
+ami = "ami-0892d3c7ee96c0bf7"
 
 instance_type = "t3.medium"
 

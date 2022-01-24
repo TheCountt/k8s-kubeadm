@@ -9,6 +9,10 @@ variable "instance_type" {}
 
 variable "k8s-sg" {}
 
+variable "worker_iam_instance_profile" {
+  type = string
+  default = "k8s-worker-profile"
+}
 
 variable "key_name" {
   type    = string
@@ -17,7 +21,7 @@ variable "key_name" {
 
 
 variable "worker_ip_list" {
-  default     = ["10.0.1.20", "10.0.1.21", "10.0.1.22"]
+  default     = ["10.0.0.20", "10.0.0.21", "10.0.0.22"]
   description = "targeted ip adddresses"
   type        = list(any)
 }

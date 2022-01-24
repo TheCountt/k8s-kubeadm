@@ -57,9 +57,7 @@ data "aws_iam_policy_document" "masterpolicy" {
       "iam:CreateServiceLinkedRole",
       "kms:DescribeKey"
       ]
-      resource = [
-        "*"
-      ]
+      resources = ["*"]
   }
 }
 
@@ -93,8 +91,7 @@ resource "aws_iam_role" "k8s-master-role" {
 
 
 resource "aws_iam_role_policy_attachment" "k8s-master-attachment" {
-  name       = "k8s-master-attachment"
-  role       = [aws_iam_role.k8s-master-role.name]
+  role       = aws_iam_role.k8s-master-role.name
   policy_arn = aws_iam_policy.k8s-master-policy.arn
 }
 
@@ -102,7 +99,7 @@ resource "aws_iam_role_policy_attachment" "k8s-master-attachment" {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 resource "aws_iam_instance_profile" "k8s-master-profile" {
-  name ="k8s-master-profile"
+  name = "k8s-master-profile"
   role = "${aws_iam_role.k8s-master-role.name}"
 }
 

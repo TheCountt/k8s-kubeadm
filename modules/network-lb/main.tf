@@ -6,7 +6,7 @@ resource "aws_lb" "k8s-kubeadm" {
   #   security_groups = [aws_security_group.k8s-sg.id]
   subnets = [var.subnet_id]
   tags = {
-    Name = var.resource_tag
+    Name = var.name_tag
   }
 }
 

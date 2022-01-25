@@ -86,15 +86,15 @@
     update_cache: true
 
 
-- name: Copy daemon.json from templates
-  ansible.builtin.template:
-    src: "./templates/{{ item.src }}.sh"
-    dest: "{{ item.dest }}"
-    owner: root
-    group: root
-    mode: 0777
-    loop:
-      - {src: daemon.json, dest: /etc/docker}
+# - name: Copy daemon.json from templates
+#   ansible.builtin.template:
+#     src: "./templates/{{ item.src }}.sh"
+#     dest: "{{ item.dest }}"
+#     owner: root
+#     group: root
+#     mode: 0777
+#     loop:
+#       - {src: daemon.json, dest: /etc/docker}
 
 
 - name: Start docker
@@ -106,8 +106,8 @@
     daemon_reload: yes
 
 
-- name: Copy kubelet.service file
-  ansible.builtin.template:
-    src: "./templates/10-kubeadm.conf"
-    dest: "/etc/systemd/system/kubelet.service.d"
+# - name: Copy kubelet.service file
+#   ansible.builtin.template:
+#     src: "./templates/10-kubeadm.conf"
+#     dest: "/etc/systemd/system/kubelet.service.d"
     

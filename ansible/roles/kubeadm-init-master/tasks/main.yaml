@@ -1,8 +1,8 @@
 ---
-# - name: Copy kubadm.conf file
-#   ansible.builtin.template:
-#     src: "./templates/kubeadm.conf"
-#     dest: "/etc/kubernetes"
+- name: Copy kubeadm.yaml file
+  ansible.builtin.template:
+    src: "./templates/kubeadm.yaml"
+    dest: "/etc/kubernetes"
 
 
 # - name: Copy 10-kubeadm.conf file
@@ -18,13 +18,13 @@
 #     creates: cluster_initialized.txt
 
 - name: initialize the cluster
-  shell: kubeadm init --config /etc/kubernetes/aws.yaml --upload-certs 
-  register: command_output
+  shell: kubeadm init --config /etc/kubernetes/kubeadm.yaml --upload-certs 
+  register: kubeadm_init
   # ignore_errors: yes
 
 - name: Print join commands
   ansible.builtin.debug:
-    var: kubeadm-init.stdout 
+    var: kubeadm_init.stdout 
 
 - pause:
     prompt: "Validate kubeadm init"

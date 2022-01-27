@@ -86,13 +86,13 @@
     update_cache: true
 
 
-# - name: Copy daemon.json from templates
-#   ansible.builtin.template:
-#     src: "./templates/{{ item.src }}.sh"
-#     dest: "{{ item.dest }}"
-#     owner: root
-#     group: root
-#     mode: 0777
+- name: Copy daemon.json from templates
+  ansible.builtin.template:
+    src: "./templates/daemon.json"
+    dest: "/etc/docker"
+    owner: root
+    group: root
+    mode: 0777
 #     loop:
 #       - {src: daemon.json, dest: /etc/docker}
 

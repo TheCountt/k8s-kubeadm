@@ -28,3 +28,4 @@ override.tf.json
 # example: *tfplan*
 .terraform*
 ssh
+z-kubeadm.conf

@@ -40,7 +40,7 @@
     mode: 0755
 
 - name: copy admin.conf to user's kube config
-  ansible-builtin.copy:
+  ansible.builtin.copy:
     src: /etc/kubernetes/admin.conf
     dest: /home/ubuntu/.kube/config
     remote_src: yes

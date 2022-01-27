@@ -11,12 +11,26 @@
 #     dest: "/etc/systemd/system/kubelet.service.d"
 
 
-- name: initialize the cluster
-  command: kubeadm init --config /etc/kubernetes/aws.yaml --upload-certs > cluster_initialized.txt
-  args:
-    chdir: $HOME
-    creates: cluster_initialized.txt
+# - name: initialize the cluster
+#   command: kubeadm init --config /etc/kubernetes/aws.yaml --upload-certs > cluster_initialized.txt
+#   args:
+#     chdir: $HOME
+#     creates: cluster_initialized.txt
 
+- name: initialize the cluster
+  shell: kubeadm init --config /etc/kubernetes/aws.yaml --upload-certs 
+  register: command_output
+  # ignore_errors: yes
+
+- name: Print join commands
+  ansible.builtin.debug:
+    var: kubeadm-init.stdout 
+
+- pause:
+    prompt: "Validate kubeadm init"
+
+- name: Store init output
+  action: copy content="{{ command_output.stdout }}" dest="/etc/kubernetes/kubeadm-init.stdout"
 
 - name: create .kube directory
   become: true

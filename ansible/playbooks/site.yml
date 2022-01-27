@@ -1,18 +1,17 @@
 ---
-- hosts: localhost
-- name: workstation assignment
-  import_playbook: ../static-assignments/workstation.yaml
+- hosts: all
+- name: Install necessary softwares and dependencies
+  import_playbook: ../static-assignments/all.yaml
+
+- hosts: tag_Name_master_0
+- name: Initialize kubeadm on Control VM 0
+  import_playbook: ../static-assignments/kubeadm-init-master.yaml
+
+- hosts: tag_Name_master_1,  tag_Name_master_2
+- name: join other Control VMs to make up the Control host plane
+  import_playbook: ../static-assignments/kubeadm-join-master.yaml
 
 
-- hosts: tag_Name_k8s_cluster_from_ground_up_master_0, tag_Name_k8s_cluster_from_ground_up_master_1, tag_Name_k8s_cluster_from_ground_up_master_2 
-- name: master nodes assignment
-  import_playbook: ../static-assignments/master.yaml
-
-- hosts: tag_Name_k8s_cluster_from_ground_up_master_0
-- name: cluster role binding assignment
-  import_playbook: ../static-assignments/rbac.yaml
-
-
-- hosts: tag_Name_k8s_cluster_from_ground_up_worker_0, tag_Name_k8s_cluster_from_ground_up_worker_1, tag_Name_k8s_cluster_from_ground_up_worker_2
-- name: worker nodes assignment
-  import_playbook: ../static-assignments/worker.yaml
+- hosts: tag_Name_worker_0, tag_Name_worker_1, tag_Name_worker_2
+- name: join worker nodes to kubernetes cluster
+  import_playbook: ../static-assignments/kubeadm-join-worker.yaml

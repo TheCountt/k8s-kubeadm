@@ -11,7 +11,7 @@ controllerManager:
     cloud-provider: "aws"
     configure-cloud-routes: "false"
     address: 0.0.0.0
-kubernetesVersion: v1.15.0
+kubernetesVersion: v1.20.0
 networking:
   dnsDomain: cluster.local
   podSubnet: 10.244.0.0/16

@@ -18,7 +18,7 @@
 #     creates: cluster_initialized.txt
 
 - name: initialize the cluster
-  shell: kubeadm init --config /etc/kubernetes/kubeadm.yaml --upload-certs 
+  shell: kubeadm init --config /etc/kubernetes/kubeadm.yaml
   register: kubeadm_init
   # ignore_errors: yes
 
@@ -30,7 +30,7 @@
     prompt: "Validate kubeadm init"
 
 - name: Store init output
-  action: copy content="{{ command_output.stdout }}" dest="/etc/kubernetes/kubeadm-init.stdout"
+  action: copy content="{{ kubeadm_init.stdout }}" dest="/etc/kubernetes/kubeadm-init.stdout"
 
 - name: create .kube directory
   become: true

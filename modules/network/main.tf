@@ -123,6 +123,15 @@ resource "aws_security_group" "k8s-sg" {
     cidr_blocks = [var.all_ips]
   }
 
+  ///////////////////////////////////
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [var.all_ips]
+  }
+//////////////////////////////////////
+
  egress {
     from_port   = 0
     to_port     = 0

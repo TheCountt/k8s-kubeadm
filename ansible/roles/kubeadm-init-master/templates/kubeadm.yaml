@@ -5,13 +5,13 @@ apiServer:
   extraArgs:
     cloud-provider: "aws"
 clusterName: k8s-kubeadm
-controlPlaneEndpoint: k8s-kubeadm-8416dbd8569f53fa.elb.us-west-2.amazonaws.com
+controlPlaneEndpoint: k8s-kubeadm-fa7d842d19d1e2b7.elb.us-west-2.amazonaws.com
 controllerManager:
   extraArgs:
     cloud-provider: "aws"
     configure-cloud-routes: "false"
     address: 0.0.0.0
-kubernetesVersion: v1.20.0
+kubernetesVersion: v1.21.0
 networking:
   dnsDomain: cluster.local
   podSubnet: 10.244.0.0/16

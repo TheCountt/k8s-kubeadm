@@ -24,9 +24,11 @@ filters:
 hostnames:
 # a list in order of precedence for hostname variables.
   - ip-address
-  - private-ip-address
   - tag:Name
+  - private-ip-address
   - dns-name
 
 compose:
-  ansible_host: ip-address
+  ansible_host: ip-address, tag:Name
+
+tag_destination_variable: tag:Name

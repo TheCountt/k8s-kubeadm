@@ -18,7 +18,8 @@
 #     creates: cluster_initialized.txt
 
 - name: initialize the cluster
-  shell: kubeadm init --config /etc/kubernetes/kubeadm.yaml
+  shell: kubeadm init --config /etc/kubernetes/kubeadm.yaml --upload-certs
+  run_once: true
   register: kubeadm_init
   # ignore_errors: yes
 
@@ -31,6 +32,7 @@
 
 - name: Store init output
   action: copy content="{{ kubeadm_init.stdout }}" dest="/etc/kubernetes/kubeadm-init.stdout"
+  run_once: true
 
 - name: create .kube directory
   become: true
@@ -38,13 +40,15 @@
     path: $HOME/.kube
     state: directory
     mode: 0755
+  run_once: true
 
 - name: copy admin.conf to user's kube config
   ansible.builtin.copy:
     src: /etc/kubernetes/admin.conf
-    dest: /home/ubuntu/.kube/config
+    dest: $HOME/.kube/config
     remote_src: yes
     owner: ubuntu
+  run_once: true
 
 # - name: install Pod network
 #   become: true

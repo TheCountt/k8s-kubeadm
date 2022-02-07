@@ -2,7 +2,9 @@
 - name: Generate join token
   shell: kubeadm token create --print-join-command
   register: kubeadm_join_cmd
-  delegate_to: "{{groups['master'][0]}}"
+  delegate_to: 35.88.58.106
+  run_once: true
+  ignore_errors: true
 
 - set_fact:
     kubeadm_join: "{{ kubeadm_join_cmd.stdout }}"
@@ -10,3 +12,5 @@
 
 - name: join cluster
   shell: "{{ kubeadm_join }}"
+  run_once: true
+  ignore_errors: true

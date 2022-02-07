@@ -18,11 +18,14 @@
 - name: Generate master join token
   shell: kubeadm token create --print-join-command
   register: kubeadm_join_cmd
-  delegate_to: "10.0.0.10"
-  
+  delegate_to: 35.88.58.106
+  run_once: true
+  ignore_errors: true
 
 - set_fact:
     kubeadm_join: "{{ kubeadm_join_cmd.stdout }}"
 
 - name: Join Master replicas to cluster
   shell: "{{ kubeadm_join }} --control-plane"
+  run_once: true
+  ignore_errors: true

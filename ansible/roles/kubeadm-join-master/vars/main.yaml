@@ -1,5 +1,6 @@
+---
 # tag_Name_master_0: "ip-10-0-0-10.us-west-2.compute.internal"
 
-# tag_Name_master_0: "{{ ansible_default_ipv4.address[2] }}"
-
 tag_Name_master_0: "{{ ansible_default_ipv4.address|default(ansible_all_ipv4_addresses[0]) }}"
+
+# tag_Name_master_0: "{{ ansible_eth0.ipv4.address[0] }}"

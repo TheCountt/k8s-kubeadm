@@ -21,18 +21,19 @@
   shell: kubeadm init --config /etc/kubernetes/kubeadm.yaml --upload-certs
   run_once: true
   register: kubeadm_init
-  # ignore_errors: yes
+  ignore_errors: true
 
 - name: Print join commands
   ansible.builtin.debug:
     var: kubeadm_init.stdout 
 
 - pause:
-    prompt: "Validate kubeadm init"
+    minutes: 2
 
 - name: Store init output
   action: copy content="{{ kubeadm_init.stdout }}" dest="/etc/kubernetes/kubeadm-init.stdout"
   run_once: true
+  ignore_errors: true
 
 - name: create .kube directory
   become: true

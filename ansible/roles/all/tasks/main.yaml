@@ -118,4 +118,28 @@
 #   ansible.builtin.template:
 #     src: "./templates/10-kubeadm.conf"
 #     dest: "/etc/systemd/system/kubelet.service.d"
+
+# add DNS names to /etc/host files
+- name: add DNS names to /etc/hosts file
+  template:
+    src: ./templates/etc.hosts.j2
+    dest: /etc/hosts
+
+
+# Update the /etc/hosts file with node names so our remote servers can talk to one another freely over SSH
+- name: update the /etc/hosts file
+  become: true
+  lineinfile:
+    path: "/etc/hosts"
+    regexp: ".*\t{{ hostvars[item]['ansible_hostname'] }}\t{{ hostvars[item]['ansible_hostname'] }}"
+    line: "{{ inventory_hostname }}\t{{ hostvars[item]['ansible_hostname'] }}\t{{ hostvars[item]['ansible_hostname'] }}"
+    state: present
+    backup: yes
+  register: etchostsupdate
+  when: inventory_hostname != "item" or inventory_hostname == "item"
+  with_items: "{{ groups['all'] }}"
+
+- name: Print /etc/hosts content
+  ansible.builtin.debug:
+    msg: "{{ etchostsupdate }}"
     

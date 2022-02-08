@@ -61,13 +61,13 @@
   # notify: Restart Controller services
 
 
-- name: Install kubelet, kubeadm,kubectl
+- name: Install kube* tools
   become: true
   apt:
     name:
-      - kubelet=1.21.0-00
       - kubeadm=1.21.0-00
       - kubectl=1.21.0-00
+      - kubelet=1.21.0-00
     state: present
     update_cache: yes
     force_apt_get: yes
@@ -131,8 +131,8 @@
   become: true
   lineinfile:
     path: "/etc/hosts"
-    regexp: ".*\t{{ hostvars[item]['ansible_env'].SSH_CONNECTION.split(' ')[2] }}\t{{ hostvars[item]['ansible_hostname']}}\t{{ hostvars[item]['ansible_hostname']}}"
-    line: "{{ hostvars[item]['ansible_env'].SSH_CONNECTION.split(' ')[2] }}\t{{ hostvars[item]['ansible_hostname']}}\t{{ hostvars[item]['ansible_hostname']}}"
+    regexp: ".*\t{{ hostvars[item]['ansible_hostname']}}\t{{ hostvars[item]['ansible_hostname']}}"
+    line: "{{ inventory_hostname }}\t{{ hostvars[item]['ansible_hostname']}}\t{{ hostvars[item]['ansible_hostname']}}"
     state: present
     backup: yes
   register: etchostsupdate

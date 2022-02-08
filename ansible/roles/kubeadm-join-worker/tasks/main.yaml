@@ -1,16 +1,21 @@
 ---
 - name: Generate join token
-  shell: kubeadm token create --print-join-command
+  shell: >
+   kubeadm token create --print-join-command
   register: kubeadm_join_cmd
-  delegate_to: 35.88.58.106
+  # delegate_to: "{{ hostvars[item]['ansible_hostname']}}"
+  delegate_to: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'][0] }}"
+  # delegate_facts: true
   run_once: true
   ignore_errors: true
+  # with_items: "{{ groups['all'] }}"
 
 - set_fact:
     kubeadm_join: "{{ kubeadm_join_cmd.stdout }}"
 
 
 - name: join cluster
-  shell: "{{ kubeadm_join }}"
+  shell: >
+   "{{ kubeadm_join }}"
   run_once: true
   ignore_errors: true

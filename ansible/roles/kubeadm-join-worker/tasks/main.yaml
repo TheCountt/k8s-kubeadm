@@ -3,9 +3,8 @@
   shell: >
    kubeadm token create --print-join-command
   register: kubeadm_join_cmd
-  # delegate_to: "{{ hostvars[item]['ansible_hostname']}}"
-  delegate_to: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'][0] }}"
-  # delegate_facts: true
+  delegate_to: tag_Name_master_0
+  delegate_facts: true
   run_once: true
   ignore_errors: true
   # with_items: "{{ groups['all'] }}"

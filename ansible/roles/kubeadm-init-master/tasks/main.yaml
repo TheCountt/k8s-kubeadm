@@ -18,7 +18,8 @@
 #     creates: cluster_initialized.txt
 
 - name: initialize the cluster
-  shell: kubeadm init --config /etc/kubernetes/kubeadm.yaml --upload-certs
+  shell: >
+   kubeadm init --config /etc/kubernetes/kubeadm.yaml --upload-certs
   args:
     creates: $HOME/kubeadm_init
   register: kubeadm_init
@@ -29,7 +30,7 @@
 - name: Print join commands
   ansible.builtin.debug:
     var: kubeadm_init.stdout
-  when: kubeadm_init.stdout == true
+  when: kubeadm_init.stdout == false
 
 - pause:
     minutes: 2
@@ -58,7 +59,7 @@
 
 - name: install Pod network
   become: true
-  command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml > pod_network_setup.txt
+  command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
   args:
     chdir: $HOME
     creates: pod_network_setup.txt

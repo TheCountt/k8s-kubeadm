@@ -29,7 +29,6 @@
     kubeadm_join: "{{ kubeadm_join_cmd.stdout }}"
 
 - name: Join Master replicas to cluster
-  become_user: root
   shell: >
    "{{ kubeadm_join }}"
   run_once: true

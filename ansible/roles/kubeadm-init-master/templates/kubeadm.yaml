@@ -5,7 +5,7 @@ apiServer:
   extraArgs:
     cloud-provider: "aws"
 clusterName: k8s-kubeadm
-controlPlaneEndpoint: 
+controlPlaneEndpoint: k8s-kubeadm-f7d1aae4352fba08.elb.us-west-2.amazonaws.com
 controllerManager:
   extraArgs:
     cloud-provider: "aws"

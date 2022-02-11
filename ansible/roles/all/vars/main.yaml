@@ -1,0 +1,6 @@
+---
+master_ip_0: "{{ ansible_eth0.ipv4.address[0] }}"
+
+master_ip_1: "{{ ansible_eth0.ipv4.address[1] }}"
+
+master_ip_2: "{{ ansible_eth0.ipv4.address[2] }}"
